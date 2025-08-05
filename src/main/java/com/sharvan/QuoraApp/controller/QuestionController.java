@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@SuppressWarnings("all")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/questions")
@@ -24,7 +25,9 @@ public class QuestionController {
 
     @GetMapping("/{id}")
     public Mono<QuestionResponse> getQuestionById(@PathVariable String id) {
-        throw new UnsupportedOperationException("Method not implemented yet");
+        return questionService.getQuestionById(id)
+                .doOnSuccess(questionResponse -> System.out.println("Question retrieved successfully: " + questionResponse))
+                .doOnError(error -> System.err.println("Error retrieving question: " + error));
     }
 
     @GetMapping()
