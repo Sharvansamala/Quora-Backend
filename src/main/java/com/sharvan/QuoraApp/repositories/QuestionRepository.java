@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 
 
 @Repository
@@ -19,4 +20,8 @@ public interface QuestionRepository extends ReactiveMongoRepository<Question, St
 
    @Query("{ $or : [ { 'title': { $regex: ?0, $options: 'i' } }, { 'content': { $regex: ?0, $options: 'i' } } ] }")
    Flux<Question> findByTitleOrContentContainingIgnoreCase(String query, Pageable pageable);
+
+   Flux<Question> findByCreatedAtGreaterThanOrderByCreatedAtAsc(LocalDateTime cursorDateTime, Pageable pageable);
+
+   Flux<Question> findTop10ByOrderByCreatedAtAsc();
 }

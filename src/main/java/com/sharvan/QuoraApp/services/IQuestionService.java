@@ -11,7 +11,7 @@ public interface IQuestionService {
 
     Mono<QuestionResponse> getQuestionById(String id);
 
-    Flux<QuestionResponse> getAllQuestions();
+    Flux<QuestionResponse> getAllQuestions(String cursor, int size);
 
     Mono<Void> deleteQuestionById(String id);
 

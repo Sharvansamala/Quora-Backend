@@ -31,8 +31,11 @@ public class QuestionController {
     }
 
     @GetMapping()
-    public Flux<QuestionResponse> getAllQuestions() {
-        return questionService.getAllQuestions()
+    public Flux<QuestionResponse> getAllQuestions(
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return questionService.getAllQuestions(cursor,size)
                 .doOnNext(questionResponse -> System.out.println("Question retrieved: " + questionResponse))
                 .doOnError(error -> System.err.println("Error retrieving questions: " + error));
     }

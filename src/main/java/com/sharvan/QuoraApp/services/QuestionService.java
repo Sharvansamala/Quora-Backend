@@ -5,8 +5,10 @@ import com.sharvan.QuoraApp.dto.QuestionRequest;
 import com.sharvan.QuoraApp.dto.QuestionResponse;
 import com.sharvan.QuoraApp.models.Question;
 import com.sharvan.QuoraApp.repositories.QuestionRepository;
+import com.sharvan.QuoraApp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,6 +30,7 @@ public class QuestionService implements IQuestionService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+
         return questionRepository.save(question)
                 .map(savedQuestion -> QuestionAdapter.toQuestionResponse(savedQuestion))
                 .doOnSuccess(questionResponse -> System.out.println("Question created successfully: " + questionResponse))
@@ -43,11 +46,24 @@ public class QuestionService implements IQuestionService {
     }
 
     @Override
-    public Flux<QuestionResponse> getAllQuestions() {
-        return questionRepository.findAll()
-                .map(QuestionAdapter::toQuestionResponse)
-                .doOnComplete(() -> System.out.println("Question retrieved successfully"))
-                .doOnError(error -> System.err.println("Error retrieving question: " + error));
+    public Flux<QuestionResponse> getAllQuestions(String cursor, int size) {
+
+        Pageable pageable = PageRequest.of(0,size);
+
+        if (CursorUtils.isValidCursor(cursor)){
+            return questionRepository.findTop10ByOrderByCreatedAtAsc()
+                    .take(size)
+                    .map(QuestionAdapter::toQuestionResponse)
+                    .doOnComplete(() -> System.out.println("Top questions retrieved successfully"))
+                    .doOnError(error -> System.err.println("Error retrieving top questions: " + error));
+        }else{
+            LocalDateTime cursorDateTime = CursorUtils.parseCursor(cursor);
+           return questionRepository.findByCreatedAtGreaterThanOrderByCreatedAtAsc(cursorDateTime,pageable)
+                   .map(QuestionAdapter::toQuestionResponse)
+                   .doOnComplete(() -> System.out.println("Questions retrieved successfully"))
+                     .doOnError(error -> System.err.println("Error retrieving questions: " + error));
+        }
+
     }
 
     @Override
