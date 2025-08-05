@@ -32,6 +32,9 @@ public class Question {
 
     private String authorId;
 
+
+    private Tag tag;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
