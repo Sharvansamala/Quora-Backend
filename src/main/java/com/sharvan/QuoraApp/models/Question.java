@@ -36,7 +36,7 @@ public class Question {
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    private LastModifiedDate updatedAt;
+    private LocalDateTime updatedAt;
 
 
 }
