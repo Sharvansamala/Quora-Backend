@@ -32,12 +32,14 @@ public class QuestionController {
 
     @GetMapping()
     public Flux<QuestionResponse> getAllQuestions() {
-        throw new UnsupportedOperationException("Method not implemented yet");
+        return questionService.getAllQuestions()
+                .doOnNext(questionResponse -> System.out.println("Question retrieved: " + questionResponse))
+                .doOnError(error -> System.err.println("Error retrieving questions: " + error));
     }
 
     @DeleteMapping("/{id}")
     public Mono<Void> deleteQuestion(@PathVariable String id) {
-        throw new UnsupportedOperationException("Method not implemented yet");
+        return questionService.deleteQuestionById(id);
     }
 
     @GetMapping("/search")
@@ -45,7 +47,7 @@ public class QuestionController {
                                                   @RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "10") int size
     ) {
-        throw new UnsupportedOperationException("Method not implemented yet");
+        return questionService.searchQuestion(query,page,size);
     }
 
 
