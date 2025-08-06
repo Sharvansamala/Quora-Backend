@@ -1,7 +1,10 @@
 package com.sharvan.QuoraApp.adapter;
 
 import com.sharvan.QuoraApp.dto.QuestionResponse;
+import com.sharvan.QuoraApp.dto.TagRequest;
+import com.sharvan.QuoraApp.dto.TagResponse;
 import com.sharvan.QuoraApp.models.Question;
+import com.sharvan.QuoraApp.models.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +20,18 @@ public class QuestionAdapter {
                 .id(question.getId())
                 .title(question.getTitle())
                 .content(question.getContent())
+                .tags(question.getTag().stream().map(QuestionAdapter::toTagResponse).toList())
                 .createdAt(question.getCreatedAt().toString())
+                .build();
+    }
+    public static Tag toTag(TagRequest request) {
+        return Tag.builder()
+                .name(request.getName())
+                .build();
+    }
+    public static TagResponse toTagResponse(Tag tag) {
+        return TagResponse.builder()
+                .name(tag.getName())
                 .build();
     }
 }

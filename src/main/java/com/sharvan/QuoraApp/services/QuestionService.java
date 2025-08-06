@@ -4,6 +4,7 @@ import com.sharvan.QuoraApp.adapter.QuestionAdapter;
 import com.sharvan.QuoraApp.dto.QuestionRequest;
 import com.sharvan.QuoraApp.dto.QuestionResponse;
 import com.sharvan.QuoraApp.models.Question;
+import com.sharvan.QuoraApp.models.Tag;
 import com.sharvan.QuoraApp.repositories.QuestionRepository;
 import com.sharvan.QuoraApp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +26,14 @@ public class QuestionService implements IQuestionService {
     @Override
     public Mono<QuestionResponse> createQuestion(QuestionRequest questionRequest) {
 
+        List<Tag> tags = questionRequest.getTags().stream()
+                .map(QuestionAdapter::toTag)
+                .toList();
+
         Question question = Question.builder()
                 .title(questionRequest.getTitle())
                 .content(questionRequest.getContent())
+                .tag(tags)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

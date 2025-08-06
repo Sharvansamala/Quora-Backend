@@ -1,11 +1,14 @@
 package com.sharvan.QuoraApp.dto;
 
+import com.sharvan.QuoraApp.models.Tag;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -20,4 +23,6 @@ public class QuestionRequest {
     @NotBlank(message = "Content cannot be blank")
     @Size(min = 20, max = 500, message = "Content must be between 20 and 500 characters")
     private String content;
+
+    private List<TagRequest> tags;
 }

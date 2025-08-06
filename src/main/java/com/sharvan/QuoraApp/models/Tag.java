@@ -10,4 +10,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @Document(collection = "tag")
 public class Tag {
+
+    private String id;
+    private String name;
+
+    private Question question;
 }
