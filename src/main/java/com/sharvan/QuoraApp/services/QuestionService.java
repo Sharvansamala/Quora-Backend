@@ -1,6 +1,7 @@
 package com.sharvan.QuoraApp.services;
 
 import com.sharvan.QuoraApp.adapter.QuestionAdapter;
+import com.sharvan.QuoraApp.adapter.TagAdapter;
 import com.sharvan.QuoraApp.dto.QuestionRequest;
 import com.sharvan.QuoraApp.dto.QuestionResponse;
 import com.sharvan.QuoraApp.models.Question;
@@ -22,12 +23,13 @@ import java.util.List;
 public class QuestionService implements IQuestionService {
 
     private final QuestionRepository questionRepository;
+    private final ITagService tagService;
 
     @Override
     public Mono<QuestionResponse> createQuestion(QuestionRequest questionRequest) {
 
         List<Tag> tags = questionRequest.getTags().stream()
-                .map(QuestionAdapter::toTag)
+                .map(TagAdapter::toTag)
                 .toList();
 
         Question question = Question.builder()
@@ -37,6 +39,10 @@ public class QuestionService implements IQuestionService {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+
+        for (Tag tag : tags) {
+            tagService.AddQuestionToTag(tag.getName(), question);
+        }
 
         return questionRepository.save(question)
                 .map(savedQuestion -> QuestionAdapter.toQuestionResponse(savedQuestion))

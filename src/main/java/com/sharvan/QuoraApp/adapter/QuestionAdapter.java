@@ -20,18 +20,9 @@ public class QuestionAdapter {
                 .id(question.getId())
                 .title(question.getTitle())
                 .content(question.getContent())
-                .tags(question.getTag().stream().map(QuestionAdapter::toTagResponse).toList())
+                .tags(question.getTag().stream().map(TagAdapter::toTagResponse).toList())
                 .createdAt(question.getCreatedAt().toString())
                 .build();
     }
-    public static Tag toTag(TagRequest request) {
-        return Tag.builder()
-                .name(request.getName())
-                .build();
-    }
-    public static TagResponse toTagResponse(Tag tag) {
-        return TagResponse.builder()
-                .name(tag.getName())
-                .build();
-    }
+
 }
