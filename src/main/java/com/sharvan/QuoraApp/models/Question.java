@@ -31,8 +31,7 @@ public class Question {
     @Size(min = 20, max = 500, message = "Content must be between 20 and 500 characters")
     private String content;
 
-    private String authorId;
-
+    private Integer views;
     private List<Tag> tag;
 
     @CreatedDate

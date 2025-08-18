@@ -1,5 +1,6 @@
 package com.sharvan.QuoraApp.models;
 
+import com.sharvan.QuoraApp.models.enums.TargetType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,10 +21,9 @@ public class Like {
     @Id
     private String id;
 
-    private String targetId; // This can be the ID of a question or an answer
+    private String targetId; // This can be the ID of  a question or an answer
 
-    //TODO: add enum for targetType
-    private String targetType; // "question" or "answer"
+    private TargetType targetType; // "question" or "answer"
 
     private boolean isLike; // true for like, false for dislike
 
