@@ -32,6 +32,7 @@ public class Question {
     private String content;
 
     private Integer views;
+
     private List<Tag> tag;
 
     @CreatedDate
@@ -39,6 +40,5 @@ public class Question {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
 
 }
