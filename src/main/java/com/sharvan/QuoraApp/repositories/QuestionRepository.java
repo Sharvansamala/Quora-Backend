@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @Repository
 public interface QuestionRepository extends ReactiveMongoRepository<Question, String> {
 
-   Flux<Question> findByAuthorId(String authorId);
+//   Flux<Question> findByAuthorId(String authorId);
 
-   Mono<Long> countByAuthorId(String authorId);
+//   Mono<Long> countByAuthorId(String authorId);
 
    @Query("{ $or : [ { 'title': { $regex: ?0, $options: 'i' } }, { 'content': { $regex: ?0, $options: 'i' } } ] }")
    Flux<Question> findByTitleOrContentContainingIgnoreCase(String query, Pageable pageable);
