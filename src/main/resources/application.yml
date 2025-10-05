@@ -8,3 +8,7 @@ spring:
       database: quora_db
       auto-index-creation: true
 
+sonar:
+  host:
+    url: http://localhost:9000
+  login: squ_b19d36990990aeecaf740e8fd792b7ff693d78b2

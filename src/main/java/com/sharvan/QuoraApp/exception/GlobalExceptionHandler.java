@@ -17,7 +17,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ConstraintDeclarationException.class)
     public ResponseEntity<ApiError> handleConstraintViolationException(ConstraintViolationException ex) {
 
-        Map<String,String> map = new HashMap<>();
         ApiError apiError = new ApiError(ex.getMessage(), HttpStatus.BAD_REQUEST);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiError);
     }
