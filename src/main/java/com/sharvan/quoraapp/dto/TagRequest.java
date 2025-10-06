@@ -1,0 +1,15 @@
+package com.sharvan.quoraapp.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class TagRequest {
+
+    private String name;
+}

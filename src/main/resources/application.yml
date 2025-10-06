@@ -1,6 +1,6 @@
 spring:
   application:
-    name: QuoraApp
+    name: quoraapp
   data:
     mongodb:
       host: localhost
@@ -11,4 +11,4 @@ spring:
 sonar:
   host:
     url: http://localhost:9000
-  login: squ_b19d36990990aeecaf740e8fd792b7ff693d78b2
+    login: squ_b19d36990990aeecaf740e8fd792b7ff693d78b2

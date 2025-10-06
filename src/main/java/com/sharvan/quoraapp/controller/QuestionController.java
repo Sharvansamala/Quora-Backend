@@ -1,0 +1,67 @@
+package com.sharvan.quoraapp.controller;
+
+import com.sharvan.quoraapp.dto.QuestionRequest;
+import com.sharvan.quoraapp.dto.QuestionResponse;
+import com.sharvan.quoraapp.services.IQuestionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+@SuppressWarnings("all")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/questions")
+public class QuestionController {
+
+    private final IQuestionService questionService;
+
+    @PostMapping
+    public Mono<QuestionResponse> createQuestion(@RequestBody QuestionRequest questionRequest) {
+        return questionService.createQuestion(questionRequest)
+                .doOnSuccess(questionResponse -> System.out.println("Question created successfully: " + questionResponse))
+                .doOnError(error -> System.err.println("Error creating question: " + error));
+    }
+
+    @GetMapping("/{id}")
+    public Mono<QuestionResponse> getQuestionById(@PathVariable String id) {
+        return questionService.getQuestionById(id)
+                .doOnSuccess(questionResponse -> System.out.println("Question retrieved successfully: " + questionResponse))
+                .doOnError(error -> System.err.println("Error retrieving question: " + error));
+    }
+
+    @GetMapping()
+    public Flux<QuestionResponse> getAllQuestions(
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return questionService.getAllQuestions(cursor,size)
+                .doOnNext(questionResponse -> System.out.println("Question retrieved: " + questionResponse))
+                .doOnError(error -> System.err.println("Error retrieving questions: " + error));
+    }
+
+    @DeleteMapping("/{id}")
+    public Mono<Void> deleteQuestion(@PathVariable String id) {
+        return questionService.deleteQuestionById(id);
+    }
+
+    @GetMapping("/search")
+    public Flux<QuestionResponse> searchQuestions(@RequestParam String query,
+                                                  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size
+    ) {
+        return questionService.searchQuestion(query,page,size);
+    }
+
+
+    @GetMapping("/tag/{tag}")
+    public Flux<QuestionResponse> getQuestionsByTag(@PathVariable String tag,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "10") int size) {
+        throw new UnsupportedOperationException("Method not implemented yet");
+    }
+
+
+}
+
+
