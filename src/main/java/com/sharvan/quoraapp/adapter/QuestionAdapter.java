@@ -16,6 +16,7 @@ public class QuestionAdapter {
                 .id(question.getId())
                 .title(question.getTitle())
                 .content(question.getContent())
+                .viewCount(question.getViews())
                 .tags(question.getTag().stream().map(TagAdapter::toTagResponse).toList())
                 .createdAt(question.getCreatedAt().toString())
                 .build();

@@ -48,7 +48,7 @@ public class QuestionService implements IQuestionService {
         }
 
         return questionRepository.save(question)
-                .map(savedQuestion -> QuestionAdapter.toQuestionResponse(savedQuestion))
+                .map(QuestionAdapter::toQuestionResponse)
                 .doOnSuccess(questionResponse -> System.out.println("Question created successfully: " + questionResponse))
                 .doOnError(error -> System.err.println("Error creating question: " + error));
     }

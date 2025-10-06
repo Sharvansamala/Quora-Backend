@@ -14,7 +14,7 @@ import java.util.List;
 public class QuestionResponse {
     private String id;
     private String title;
-
+    private Integer viewCount;
     private List<TagResponse> tags;
     private String content;
     private String createdAt;
