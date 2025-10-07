@@ -2,8 +2,12 @@ package com.sharvan.quoraapp.controller;
 
 import com.sharvan.quoraapp.dto.QuestionRequest;
 import com.sharvan.quoraapp.dto.QuestionResponse;
+import com.sharvan.quoraapp.models.QuestionElasticDocument;
 import com.sharvan.quoraapp.services.IQuestionService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -61,6 +65,10 @@ public class QuestionController {
         throw new UnsupportedOperationException("Method not implemented yet");
     }
 
+    @GetMapping("/search/elasticsearch")
+    public List<QuestionElasticDocument> searchQuestionsByElasticsearch(@RequestParam String query) {
+        return questionService.searchQuestionsByElasticsearch(query);
+    }
 
 }
 

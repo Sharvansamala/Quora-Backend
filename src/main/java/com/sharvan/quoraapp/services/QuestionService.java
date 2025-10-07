@@ -6,8 +6,10 @@ import com.sharvan.quoraapp.dto.QuestionRequest;
 import com.sharvan.quoraapp.dto.QuestionResponse;
 import com.sharvan.quoraapp.events.ViewCountEvent;
 import com.sharvan.quoraapp.models.Question;
+import com.sharvan.quoraapp.models.QuestionElasticDocument;
 import com.sharvan.quoraapp.models.Tag;
 import com.sharvan.quoraapp.producers.KafkaEventProducer;
+import com.sharvan.quoraapp.repositories.QuestionDocumentRepository;
 import com.sharvan.quoraapp.repositories.QuestionRepository;
 import com.sharvan.quoraapp.utils.CursorUtils;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +29,9 @@ public class QuestionService implements IQuestionService {
     private final QuestionRepository questionRepository;
     private final ITagService tagService;
     private final KafkaEventProducer kafkaEventProducer;
+    private final IQuestionIndexService questionIndexService;
+
+    private final QuestionDocumentRepository questionDocumentRepository;
 
     @Override
     public Mono<QuestionResponse> createQuestion(QuestionRequest questionRequest) {
@@ -48,8 +53,12 @@ public class QuestionService implements IQuestionService {
         }
 
         return questionRepository.save(question)
-                .map(QuestionAdapter::toQuestionResponse)
-                .doOnSuccess(questionResponse -> System.out.println("Question created successfully: " + questionResponse))
+                .map(savedQuestion -> {
+                    questionIndexService.createQuestionIndex(savedQuestion);
+                    return QuestionAdapter.toQuestionResponse(savedQuestion);
+                })
+                .doOnSuccess(
+                        questionResponse -> System.out.println("Question created successfully: " + questionResponse))
                 .doOnError(error -> System.err.println("Error creating question: " + error));
     }
 
@@ -58,31 +67,30 @@ public class QuestionService implements IQuestionService {
         return questionRepository.findById(id)
                 .map(QuestionAdapter::toQuestionResponse)
                 .doOnSuccess(success -> {
-                            System.out.println("Question retrieved successfully");
-                            ViewCountEvent viewCountEvent = new ViewCountEvent(id, "Question", LocalDateTime.now());
-                            kafkaEventProducer.publishViewCountEvent(viewCountEvent);
-                        }
-                )
+                    System.out.println("Question retrieved successfully");
+                    ViewCountEvent viewCountEvent = new ViewCountEvent(id, "Question", LocalDateTime.now());
+                    kafkaEventProducer.publishViewCountEvent(viewCountEvent);
+                })
                 .doOnError(error -> System.err.println("Error retrieving question: " + error));
     }
 
     @Override
     public Flux<QuestionResponse> getAllQuestions(String cursor, int size) {
 
-        Pageable pageable = PageRequest.of(0,size);
+        Pageable pageable = PageRequest.of(0, size);
 
-        if (CursorUtils.isValidCursor(cursor)){
+        if (CursorUtils.isValidCursor(cursor)) {
             return questionRepository.findTop10ByOrderByCreatedAtAsc()
                     .take(size)
                     .map(QuestionAdapter::toQuestionResponse)
                     .doOnComplete(() -> System.out.println("Top questions retrieved successfully"))
                     .doOnError(error -> System.err.println("Error retrieving top questions: " + error));
-        }else{
+        } else {
             LocalDateTime cursorDateTime = CursorUtils.parseCursor(cursor);
-           return questionRepository.findByCreatedAtGreaterThanOrderByCreatedAtAsc(cursorDateTime,pageable)
-                   .map(QuestionAdapter::toQuestionResponse)
-                   .doOnComplete(() -> System.out.println("Questions retrieved successfully"))
-                     .doOnError(error -> System.err.println("Error retrieving questions: " + error));
+            return questionRepository.findByCreatedAtGreaterThanOrderByCreatedAtAsc(cursorDateTime, pageable)
+                    .map(QuestionAdapter::toQuestionResponse)
+                    .doOnComplete(() -> System.out.println("Questions retrieved successfully"))
+                    .doOnError(error -> System.err.println("Error retrieving questions: " + error));
         }
 
     }
@@ -96,9 +104,16 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public Flux<QuestionResponse> searchQuestion(String query, int page, int size) {
-        return questionRepository.findByTitleOrContentContainingIgnoreCase(query, PageRequest.of(page,size))
+        return questionRepository.findByTitleOrContentContainingIgnoreCase(query, PageRequest.of(page, size))
                 .map(QuestionAdapter::toQuestionResponse)
-                .doOnComplete(()-> System.out.println("Success"))
-                .doOnError(error-> System.out.println("Error "+error));
+                .doOnComplete(() -> System.out.println("Success"))
+                .doOnError(error -> System.out.println("Error " + error));
+    }
+
+    @Override
+    public List<QuestionElasticDocument> searchQuestionsByElasticsearch(String query) {
+        // TODO Auto-generated method stub
+        return questionDocumentRepository.findByTitleContainingOrContentContaining(query, query);
+
     }
 }
