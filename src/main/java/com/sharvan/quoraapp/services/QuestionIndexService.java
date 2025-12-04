@@ -1,5 +1,6 @@
 package com.sharvan.quoraapp.services;
 
+
 import org.springframework.stereotype.Service;
 
 import com.sharvan.quoraapp.models.Question;
@@ -22,6 +23,8 @@ public class QuestionIndexService implements IQuestionIndexService {
                 .content(question.getContent())
                 .build();
         questionDocumentRepository.save(document);
+
+
     }
 
 }

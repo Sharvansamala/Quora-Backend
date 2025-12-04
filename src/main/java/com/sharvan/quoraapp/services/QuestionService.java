@@ -112,7 +112,6 @@ public class QuestionService implements IQuestionService {
 
     @Override
     public List<QuestionElasticDocument> searchQuestionsByElasticsearch(String query) {
-        // TODO Auto-generated method stub
         return questionDocumentRepository.findByTitleContainingOrContentContaining(query, query);
 
     }

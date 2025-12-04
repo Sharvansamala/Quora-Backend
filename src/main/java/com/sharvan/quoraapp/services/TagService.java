@@ -7,11 +7,14 @@ import com.sharvan.quoraapp.models.Question;
 import com.sharvan.quoraapp.models.Tag;
 import com.sharvan.quoraapp.repositories.TagRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TagService implements ITagService{
 
@@ -22,8 +25,8 @@ public class TagService implements ITagService{
     public Flux<TagResponse> getQuestionsByTag(String tagName) {
             return tagRepository.findAllByTagName(tagName)
                     .map(TagAdapter::toTagResponse)
-                    .doOnComplete(() -> System.out.println("Question retrieval for tag completed successfully"))
-                    .doOnError(error -> System.err.println("Error retrieving questions for tag: " + error));
+                    .doOnComplete(() -> log.info("Question retrieval for tag completed successfully"))
+                    .doOnError(error -> log.error("Error retrieving questions for tag: " + error));
     }
 
     @Override
